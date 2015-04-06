@@ -1,6 +1,6 @@
 {
 	"name": "crx-webpack-plugin",
-	"version": "0.1.1",
+	"version": "0.1.2",
   "author": "John Agan <johnagan@github.com>",
 	"description": "A webpack plugin to package chrome extensions (crx) post build",
   "homepage": "https://github.com/johnagan/crx-webpack-plugin",
@@ -19,7 +19,7 @@
   "bugs": {
     "url": "https://github.com/johnagan/crx-webpack-plugin/issues"
   },
-  "devDependencies": {
+  "dependencies": {
 		"mkdirp": "~0.5.0",
 		"crx": "~3.0.2"
   }
