@@ -6,6 +6,15 @@ var ChromeExtension = require('crx');
 
 function Plugin(options) {
   this.options = options || {};
+  if (!this.options.updateUrl) {
+    this.options.updateUrl = "http://localhost:8000/";
+  }
+  if (!this.options.updateFilename) {
+    this.options.updateFilename = "updates.xml";
+  }
+
+  // remove trailing slash
+  this.options.updateUrl = this.options.updateUrl.replace(/\/$/, "");
 
   // setup paths
   this.context = path.dirname(module.parent.filename);
@@ -16,11 +25,13 @@ function Plugin(options) {
   // set output info
   this.crxName = this.options.name + ".crx";
   this.crxFile = join(this.outputPath, this.crxName);
+  this.updateFile = join(this.outputPath, this.options.updateFilename);
+  this.updateUrl = this.options.updateUrl + "/" + this.options.updateFilename;
 
   // initiate crx
   this.crx = new ChromeExtension({
     privateKey: fs.readFileSync(this.keyFile),
-    codebase: "http://localhost:8000/" + this.crxName
+    codebase: this.options.updateUrl + '/' + this.crxName
   });
 }
 
@@ -39,6 +50,8 @@ Plugin.prototype.package = function() {
     self.crx.pack().then(function(buffer) {
       mkdirp(self.outputPath, function(err) {
         if (err) throw(err)
+        var updateXML = self.crx.generateUpdateXML();
+        fs.writeFile(self.updateFile, updateXML);
         fs.writeFile(self.crxFile, buffer);
       });
     });
