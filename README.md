@@ -1,4 +1,4 @@
-# Clean for webpack
+# Crx Builder for webpack
 A webpack plugin to package chrome extensions (crx) post build
 
 ## Usage
