@@ -23,8 +23,21 @@ function Plugin(options) {
   this.contentPath = path.isAbsolute(this.options.contentPath) ? this.options.contentPath : join(this.context, this.options.contentPath);
 
   // set output info
-  this.crxName = this.options.name + ".crx";
-  this.crxFile = join(this.outputPath, this.crxName);
+  this.crxName = {
+    toString: function() {
+      if (this.options.name instanceof Function) {
+        return this.options.name() + ".crx";
+      }
+
+      return this.options.name + ".crx"
+    }.bind(this)
+  };
+  this.crxFile = {
+    toString: function () {
+      return join(this.outputPath, this.crxName + '');
+    }.bind(this)
+  };
+
   this.updateFile = join(this.outputPath, this.options.updateFilename);
   this.updateUrl = this.options.updateUrl + "/" + this.options.updateFilename;
 
@@ -52,7 +65,7 @@ Plugin.prototype.package = function() {
         if (err) throw(err)
         var updateXML = self.crx.generateUpdateXML();
         fs.writeFile(self.updateFile, updateXML);
-        fs.writeFile(self.crxFile, buffer);
+        fs.writeFile(self.crxFile + '', buffer);
       });
     });
   });
