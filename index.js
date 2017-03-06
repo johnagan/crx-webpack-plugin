@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var nodePath = path;
 var join = path.join;
 var mkdirp = require('mkdirp');
 var ChromeExtension = require('crx');
@@ -21,6 +22,7 @@ function Plugin(options) {
   this.keyFile = path.isAbsolute(this.options.keyFile) ? this.options.keyFile : join(this.context, this.options.keyFile);
   this.outputPath = path.isAbsolute(this.options.outputPath) ? this.options.outputPath : join(this.context, this.options.outputPath);
   this.contentPath = path.isAbsolute(this.options.contentPath) ? this.options.contentPath : join(this.context, this.options.contentPath);
+  this.exclude = this.options.exclude || [];
 
   // set output info
   this.crxName = this.options.name + ".crx";
@@ -36,26 +38,57 @@ function Plugin(options) {
 }
 
 // hook into webpack
-Plugin.prototype.apply = function(compiler) {
+Plugin.prototype.apply = function (compiler) {
   var self = this;
-  return compiler.plugin('done', function() {
+  return compiler.plugin('done', function () {
     self.package.call(self);
   });
 }
 
 // package the extension
-Plugin.prototype.package = function() {
+Plugin.prototype.package = function () {
   var self = this;
-  self.crx.load(self.contentPath).then(function() {
-    self.crx.pack().then(function(buffer) {
-      mkdirp(self.outputPath, function(err) {
-        if (err) throw(err)
+
+  let loadParam = this.contentPath;
+
+  if (this.exclude.length > 0) {
+    loadParam = recursiveReaddirSync(this.contentPath).filter((file) => {
+      return !this.exclude.some((excludeReg) => {
+        return excludeReg.test(file);
+      });
+    }).map((file) => {
+      return file;
+    });
+  }
+
+  self.crx.load(loadParam).then(function () {
+    self.crx.pack().then(function (buffer) {
+      mkdirp(self.outputPath, function (err) {
+        if (err) throw (err)
         var updateXML = self.crx.generateUpdateXML();
         fs.writeFile(self.updateFile, updateXML);
         fs.writeFile(self.crxFile, buffer);
       });
     });
   });
+}
+
+function recursiveReaddirSync(path) {
+  var list = []
+    , files = fs.readdirSync(path)
+    , stats
+    ;
+
+  files.forEach(function (file) {
+    stats = fs.lstatSync(nodePath.join(path, file));
+    if (stats.isDirectory()) {
+      list = list.concat(recursiveReaddirSync(nodePath.join(path, file)));
+    } else {
+      list.push(nodePath.join(path, file));
+    }
+  });
+
+  return list;
 }
 
 module.exports = Plugin;

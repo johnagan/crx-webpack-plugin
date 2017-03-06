@@ -11,7 +11,8 @@ module.exports = {
 			keyFile: 'key.pem',
 			contentPath: 'build',
 			outputPath: 'dist',
-			name: 'chrome-ext'
+			name: 'chrome-ext',
+			exclude: [] // optional, array of regexps to exclude files from the crx
 		})
 	]
 }
