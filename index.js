@@ -12,6 +12,9 @@ function Plugin(options) {
   if (!this.options.updateFilename) {
     this.options.updateFilename = "updates.xml";
   }
+  if (typeof this.options.generateUpdateFile === 'undefined') {
+    this.options.generateUpdateFile = true;
+  }
 
   // remove trailing slash
   this.options.updateUrl = this.options.updateUrl.replace(/\/$/, "");
@@ -26,6 +29,7 @@ function Plugin(options) {
   this.crxName = this.options.name + ".crx";
   this.crxFile = join(this.outputPath, this.crxName);
   this.updateFile = join(this.outputPath, this.options.updateFilename);
+  this.generateUpdateFile = this.options.generateUpdateFile;
   this.updateUrl = this.options.updateUrl + "/" + this.options.updateFilename;
 
   // initiate crx
@@ -50,9 +54,11 @@ Plugin.prototype.package = function() {
     self.crx.pack().then(function(buffer) {
       mkdirp(self.outputPath, function(err) {
         if (err) throw(err)
-        var updateXML = self.crx.generateUpdateXML();
-        fs.writeFile(self.updateFile, updateXML);
-        fs.writeFile(self.crxFile, buffer);
+    	fs.writeFile(self.crxFile, buffer);	 
+		  if(self.generateUpdateFile) {
+        	var updateXML = self.crx.generateUpdateXML();
+        	fs.writeFile(self.updateFile, updateXML);
+        }
       });
     });
   });
