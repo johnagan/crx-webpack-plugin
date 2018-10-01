@@ -54,10 +54,10 @@ Plugin.prototype.package = function() {
     self.crx.pack().then(function(buffer) {
       mkdirp(self.outputPath, function(err) {
         if (err) throw(err)
-    	fs.writeFile(self.crxFile, buffer);	 
+    	fs.writeFileSync(self.crxFile, buffer);
 		  if(self.generateUpdateFile) {
         	var updateXML = self.crx.generateUpdateXML();
-        	fs.writeFile(self.updateFile, updateXML);
+        	fs.writeFileSync(self.updateFile, updateXML);
         }
       });
     });
