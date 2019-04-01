@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "mkdirp": "~0.5.1",
-    "crx": "~4.0.1"
+    "crx": "oncletom/crx"
   }
 }
