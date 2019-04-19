@@ -31,11 +31,13 @@ function Plugin(options) {
   this.updateFile = join(this.outputPath, this.options.updateFilename);
   this.generateUpdateFile = this.options.generateUpdateFile;
   this.updateUrl = this.options.updateUrl + "/" + this.options.updateFilename;
+  this.crxVersion = this.options.crxVersion;
 
   // initiate crx
   this.crx = new ChromeExtension({
     privateKey: fs.readFileSync(this.keyFile),
-    codebase: this.options.updateUrl + '/' + this.crxName
+    codebase: this.options.updateUrl + '/' + this.crxName,
+    version: this.crxVersion
   });
 }
 
