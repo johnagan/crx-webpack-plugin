@@ -26,12 +26,13 @@ function Plugin(options) {
   this.crxName = this.options.name + ".crx";
   this.crxFile = join(this.outputPath, this.crxName);
   this.updateFile = join(this.outputPath, this.options.updateFilename);
-  this.updateUrl = this.options.updateUrl + "/" + this.options.updateFilename;
+  const pathSeparator = this.options.pathSeparator || '/';
+  this.updateUrl = this.options.updateUrl + pathSeparator + this.options.updateFilename;
 
   // initiate crx
   this.crx = new ChromeExtension({
     privateKey: fs.readFileSync(this.keyFile),
-    codebase: this.options.updateUrl + '/' + this.crxName
+    codebase: this.options.updateUrl + pathSeparator + this.crxName
   });
 }
 
