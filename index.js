@@ -39,7 +39,7 @@ function Plugin(options) {
 Plugin.prototype.apply = function(compiler) {
   var self = this;
   self.logger = compiler.getInfrastructureLogger('crx-webpack-plugin');
-  return compiler.plugin('done', function() {
+  return compiler.hooks.done.tap('crx-webpack-plugin', function() {
     self.package.call(self);
   });
 }
