@@ -57,9 +57,9 @@ Plugin.prototype.package = function() {
       mkdirp(self.outputPath, function(err) {
         if (err) throw(err)
     	fs.writeFileSync(self.crxFile, buffer);
-		  if(self.generateUpdateFile) {
-        	var updateXML = self.crx.generateUpdateXML();
-        	fs.writeFileSync(self.updateFile, updateXML);
+        if(self.generateUpdateFile) {
+          var updateXML = self.crx.generateUpdateXML();
+          fs.writeFileSync(self.updateFile, updateXML);
         }
       });
     });
